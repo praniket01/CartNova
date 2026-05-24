@@ -1,0 +1,6 @@
+@CartNova.Services_HostAddress = http://localhost:5118
+
+GET {{CartNova.Services_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
