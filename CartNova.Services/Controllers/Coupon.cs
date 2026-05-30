@@ -2,6 +2,7 @@
 using CartNova.Services.DTO;
 using CartNova.Services.Models;
 using CartNova.Services.Repository;
+using CartNovaFrontend.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CartNova.Services.Controllers
@@ -12,103 +13,214 @@ namespace CartNova.Services.Controllers
     {
         private readonly ICouponRepository couponRepository;
         private readonly IMapper mapper;
-        public Coupon(ICouponRepository couponRepository,IMapper mapper)
+
+        public Coupon(ICouponRepository couponRepository, IMapper mapper)
         {
             this.couponRepository = couponRepository;
             this.mapper = mapper;
         }
 
         #region GET Requests
+
         [HttpGet]
-        public IEnumerable<CouponDTO> Get()
+        public ActionResult<ResponseDto> Get()
         {
-            var res = couponRepository.GetAll();
-            if (res != null)
+            ResponseDto response = new();
+
+            try
             {
-                var result = mapper.Map<IEnumerable<CouponDTO>>(res);
-                return result;
+                var res = couponRepository.GetAll();
+
+                response.Result = mapper.Map<IEnumerable<CouponDTO>>(res);
+                response.IsSuccess = true;
             }
-            else
-                return null;
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+
+            return Ok(response);
         }
 
-        [HttpGet]
-        [Route("{id}")]
-        public CouponDTO Get(int id)
+        [HttpGet("{id}")]
+        public ActionResult<ResponseDto> Get(int id)
         {
-            var res = couponRepository.GetById(id);
-            return mapper.Map<CouponDTO>(res);
+            ResponseDto response = new();
+
+            try
+            {
+                var res = couponRepository.GetById(id);
+
+                if (res == null)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Coupon not found";
+                    return NotFound(response);
+                }
+
+                response.IsSuccess = true;
+                response.Result = mapper.Map<CouponDTO>(res);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+
+            return Ok(response);
         }
 
-        [HttpGet]
-        [Route("GetByCode/{code}")]
-        public CouponDTO GetByCode(string code)
+        [HttpGet("GetByCode/{code}")]
+        public ActionResult<ResponseDto> GetByCode(string code)
         {
-            var res = couponRepository.GetByCode(code);
-            return mapper.Map<CouponDTO>(res);
+            ResponseDto response = new();
+
+            try
+            {
+                var res = couponRepository.GetByCode(code);
+
+                if (res == null)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Coupon not found";
+                    return NotFound(response);
+                }
+
+                response.IsSuccess = true;
+                response.Result = mapper.Map<CouponDTO>(res);
+            }
+            catch (Exception ex)
+            {
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+            }
+
+            return Ok(response);
         }
+
         #endregion
 
         #region POST Requests
+
         [HttpPost]
-        public CouponDTO AddCoupon([FromBody] CouponDTO coupon) {
+        public ActionResult<ResponseDto> AddCoupon([FromBody] CouponDTO coupon)
+        {
+            ResponseDto response = new();
+
             try
             {
-                Models.Coupon coupon1 = mapper.Map<Models.Coupon>(coupon);
-                if (coupon1 == null)
+                Models.Coupon couponEntity = mapper.Map<Models.Coupon>(coupon);
+
+                if (couponEntity == null)
                 {
-                    return null;
+                    response.IsSuccess = false;
+                    response.Message = "Invalid coupon data";
+                    return BadRequest(response);
                 }
-                Models.Coupon returnedVal = couponRepository.AddCoupon(coupon1);
-                return mapper.Map<CouponDTO>(returnedVal);
+
+                response.IsSuccess = true;
+                Models.Coupon returnedVal = couponRepository.AddCoupon(couponEntity);
+
+                response.Result = mapper.Map<CouponDTO>(returnedVal);
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return null;
+                response.IsSuccess = false;
+                response.Message = ex.Message;
             }
+
+            return Ok(response);
         }
+
         #endregion
 
         #region PUT Requests
+
         [HttpPut]
-        public CouponDTO Edit([FromBody] CouponDTO couponDTO)
+        public ActionResult<ResponseDto> Edit([FromBody] CouponDTO couponDTO)
         {
+            ResponseDto response = new();
+
             try
             {
-                if (couponDTO == null) return null;
-                Models.Coupon existingCoupon = couponRepository.GetById(couponDTO.CouponId);
-                if (existingCoupon == null) return null;
-                //var coupon = existingCoupon;
+                if (couponDTO == null)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Invalid request";
+                    return BadRequest(response);
+                }
+
+                Models.Coupon existingCoupon =
+                    couponRepository.GetById(couponDTO.CouponId);
+
+                if (existingCoupon == null)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Coupon not found";
+                    return NotFound(response);
+                }
+
                 existingCoupon = mapper.Map<Models.Coupon>(couponDTO);
-                Models.Coupon updatedCoupon = couponRepository.updateCoupon(existingCoupon);
-                return mapper.Map<CouponDTO>(updatedCoupon);
+
+                Models.Coupon updatedCoupon =
+                    couponRepository.updateCoupon(existingCoupon);
+
+                response.Result = mapper.Map<CouponDTO>(updatedCoupon);
+                response.IsSuccess = true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return null;
+                response.IsSuccess = false;
+                response.Message = ex.Message;
             }
+
+            return Ok(response);
         }
+
         #endregion
 
-        #region Delete Requests
+        #region DELETE Requests
+
         [HttpDelete]
-        public IActionResult DeleteCoupon([FromBody] DeleteCouponRequest request)
+        public ActionResult<ResponseDto> DeleteCoupon([FromBody] DeleteCouponRequest request)
         {
+            ResponseDto response = new();
+
             try
             {
-                if(request.Id == null) return BadRequest("Invalid coupon ID");
+                if (request.Id == null)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Invalid coupon ID";
+                    return BadRequest(response);
+                }
+
                 var existingCoupon = couponRepository.GetById(request.Id);
-                if (existingCoupon == null) return NotFound("Coupon not found");
-                return couponRepository.DeleteCoupon(request.Id);
+
+                if (existingCoupon == null)
+                {
+                    response.IsSuccess = false;
+                    response.Message = "Coupon not found";
+                    return NotFound(response);
+                }
+
+                couponRepository.DeleteCoupon(request.Id);
+
+                response.Result = true;
+                response.IsSuccess = true;
+                response.Message = "Coupon deleted successfully";
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                return StatusCode(500, "Internal server error");
+                response.IsSuccess = false;
+                response.Message = ex.Message;
+                return StatusCode(500, response);
             }
+
+            return Ok(response);
         }
+
         #endregion
     }
 }

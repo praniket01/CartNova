@@ -34,13 +34,12 @@ namespace CartNovaFrontend.Service.Impl
             });
         }
 
-        public async Task<ResponseDto> GetAllCouponsAsync(string token)
+        public async Task<ResponseDto> GetAllCouponsAsync()
         {
            return await _baseService.SendAsync(new RequestDto
            {
                ApiType = SD.ApiType.GET,
                Url = SD.CouponAPIBase + "/api/coupon",
-               AccessToken = token
            });
         }
 
