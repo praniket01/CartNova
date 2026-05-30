@@ -12,25 +12,22 @@ namespace CartNovaFrontend.Service.Impl
             this._baseService = _baseService;
         }
 
-        public Task<ResponseDto> CreateUpdateCouponAsync(CouponDto couponDto, string token)
+        public Task<ResponseDto> CreateUpdateCouponAsync(CouponDto couponDto)
         {
             return _baseService.SendAsync(new RequestDto
             {
                 ApiType = SD.ApiType.POST,
                 Data = couponDto,
                 Url = SD.CouponAPIBase + "/api/coupon",
-                AccessToken = token
             });
         }
 
-        public Task<ResponseDto> DeleteCouponAsync(DeleteCouponDto couponDto,string token)
+        public Task<ResponseDto> DeleteCouponAsync(int couponDto)
         {
             return _baseService.SendAsync(new RequestDto
             {
                 ApiType = SD.ApiType.DELETE,
-                Url = SD.CouponAPIBase + "/api/coupon/",
-                Data = couponDto.Id,
-                AccessToken = token
+                Url = SD.CouponAPIBase + "/api/coupon/"+couponDto,
             });
         }
 
@@ -43,13 +40,12 @@ namespace CartNovaFrontend.Service.Impl
            });
         }
 
-        public Task<ResponseDto> GetCouponByIdAsync(int id, string token)
+        public Task<ResponseDto> GetCouponByIdAsync(int id)
         {
             return _baseService.SendAsync(new RequestDto
             {
                 ApiType = SD.ApiType.GET,
                 Url = SD.CouponAPIBase + "/api/coupon/" + id,
-                AccessToken = token
             });
         }
 

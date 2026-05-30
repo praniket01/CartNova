@@ -183,20 +183,21 @@ namespace CartNova.Services.Controllers
         #region DELETE Requests
 
         [HttpDelete]
-        public ActionResult<ResponseDto> DeleteCoupon([FromBody] DeleteCouponRequest request)
+        [Route("{id:int}")]
+        public ActionResult<ResponseDto> DeleteCoupon(int id)
         {
             ResponseDto response = new();
 
             try
             {
-                if (request.Id == null)
-                {
-                    response.IsSuccess = false;
-                    response.Message = "Invalid coupon ID";
-                    return BadRequest(response);
-                }
+                //if (request.Id == null)
+                //{
+                //    response.IsSuccess = false;
+                //    response.Message = "Invalid coupon ID";
+                //    return BadRequest(response);
+                //}
 
-                var existingCoupon = couponRepository.GetById(request.Id);
+                var existingCoupon = couponRepository.GetById(id);
 
                 if (existingCoupon == null)
                 {
@@ -205,7 +206,7 @@ namespace CartNova.Services.Controllers
                     return NotFound(response);
                 }
 
-                couponRepository.DeleteCoupon(request.Id);
+                couponRepository.DeleteCoupon(id);
 
                 response.Result = true;
                 response.IsSuccess = true;

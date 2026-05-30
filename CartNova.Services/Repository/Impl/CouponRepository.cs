@@ -83,6 +83,8 @@ namespace CartNova.Services.Repository.Impl
             return existingCoupon;
         }
 
+        [HttpDelete]
+        [Route("{id:int}")]
         public IActionResult DeleteCoupon(int id)
         {
             var existingCoupon = dbContext.Coupons.Find(id);
