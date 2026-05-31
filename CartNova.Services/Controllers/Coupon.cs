@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CartNova.Services.Controllers
 {
-    [Route("jls;faj/[controller]")]
+    [Route("api/[controller]")]
     [ApiController]
     public class Coupon : ControllerBase
     {

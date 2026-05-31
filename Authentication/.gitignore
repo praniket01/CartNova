@@ -1,0 +1,33 @@
+# Build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio files
+.vs/
+
+# Rider
+.idea/
+
+# ASP.NET Core app settings
+appsettings.json
+
+# Optional: Ignore environment-specific settings
+appsettings.*.json
+
+# Keep example/template settings tracked
+!appsettings.Development.json
+!appsettings.Example.json
+
+# Logs
+logs/
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db

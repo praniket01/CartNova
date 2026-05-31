@@ -69,6 +69,7 @@ namespace CartNovaFrontend.Controllers
             ResponseDto? response = await _couponService.DeleteCouponAsync(couponDto.CouponId);
             if (response != null && response.IsSuccess)
             {
+                TempData["success"] = "Deleted Successfully";
                 return RedirectToAction(nameof(CouponIndex));
             }
             return View(couponDto);
