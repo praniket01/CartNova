@@ -20,7 +20,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFramework
     .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
-
+builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerateor>();
 
 
 var app = builder.Build();

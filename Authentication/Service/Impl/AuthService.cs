@@ -11,11 +11,13 @@ namespace Authentication.Service.Impl
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly AuthDbContext _dbContext;
+        private readonly IJwtTokenGenerator _jwtTokenGenerator;
         public AuthService( UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager, AuthDbContext dbContext) {
+            RoleManager<IdentityRole> roleManager, AuthDbContext dbContext, IJwtTokenGenerator jwtTokenGenerator) {
             _dbContext = dbContext;
             _userManager = userManager;
             _roleManager = roleManager;
+            _jwtTokenGenerator = jwtTokenGenerator;
         }
         public async Task<ResponseDto> Login([FromBody] LoginDto loginDto)
         {
@@ -29,6 +31,10 @@ namespace Authentication.Service.Impl
 
                     if (user != null && pwdcheck)
                     {
+
+                        //Generate Token
+                        var token = _jwtTokenGenerator.GenerateToken(user);
+
                         UserDto userDto = new()
                         {
                             Email = user.Email,
@@ -40,7 +46,7 @@ namespace Authentication.Service.Impl
                         LoginResponseDto loginResponseDto = new()
                         {
                             UserDto = userDto,
-                            Token = ""
+                            Token = token
                         };
 
                         return new ResponseDto
