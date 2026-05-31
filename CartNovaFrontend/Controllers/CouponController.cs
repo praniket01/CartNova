@@ -22,6 +22,7 @@ namespace CartNovaFrontend.Controllers
             {
                 couponDto = JsonConvert.DeserializeObject<List<CouponDto>>(Convert.ToString(response.Result));
             }
+            TempData["Error"] = response.Message;
             return View(couponDto);
         }
 
@@ -40,6 +41,7 @@ namespace CartNovaFrontend.Controllers
                 {
                     return RedirectToAction(nameof(CouponIndex));
                 }
+                TempData["Error"] =response.Message;
             }
             return View(couponDto);
         }
@@ -54,6 +56,7 @@ namespace CartNovaFrontend.Controllers
                 CouponDto? couponDto = JsonConvert.DeserializeObject<CouponDto>(Convert.ToString(response.Result));
                 return View(couponDto);
             }
+            TempData["Error"] = response.Message;
             return NotFound();
 
         }
