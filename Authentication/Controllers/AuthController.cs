@@ -37,9 +37,18 @@ namespace Authentication.Controllers
 
         [HttpPost]
         [Route("login")]
-        public IActionResult Login(LoginDto loginDto)
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            return Ok("Login");
+           var result =  await _authService.Login(loginDto);
+
+            if (result.IsSuccess)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
     }
 }

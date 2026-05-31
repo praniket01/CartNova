@@ -2,6 +2,7 @@
 using Authentication.Models;
 using CartNova.Services.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Authentication.Service.Impl
 {
@@ -16,9 +17,58 @@ namespace Authentication.Service.Impl
             _userManager = userManager;
             _roleManager = roleManager;
         }
-        public Task<ResponseDto> Login(LoginDto loginDto)
+        public async Task<ResponseDto> Login([FromBody] LoginDto loginDto)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var user = _dbContext.ApplicationUsers.FirstOrDefault(u => u.Email == loginDto.Email);
+
+                if (user != null)
+                {
+                    var pwdcheck = await _userManager.CheckPasswordAsync(user, loginDto.Password);
+
+                    if (user != null && pwdcheck)
+                    {
+                        UserDto userDto = new()
+                        {
+                            Email = user.Email,
+                            Id = user.Id,
+                            Name = user.Name,
+                            PhoneNumber = user.PhoneNumber
+                        };
+
+                        LoginResponseDto loginResponseDto = new()
+                        {
+                            UserDto = userDto,
+                            Token = ""
+                        };
+
+                        return new ResponseDto
+                        {
+                            IsSuccess = true,
+                            Result = loginResponseDto
+                        };
+                    }
+                }
+                else
+                {
+                    return new ResponseDto
+                    {
+                        IsSuccess = false,
+                        Message = "Invalid email or password"
+                    };
+
+                }
+                return new ResponseDto
+                {
+                    IsSuccess = false,
+                    Message = "Invalid email or password"
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<string> Register(RegisterDto registerDto)
