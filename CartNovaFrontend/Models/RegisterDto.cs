@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Authentication.Dto
+namespace CartNovaFrontend.Models
 {
     public class RegisterDto
     {

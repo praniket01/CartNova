@@ -3,7 +3,9 @@ using Authentication.Dto;
 using Authentication.Service;
 using Authentication.Service.Impl;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client;
 
 namespace Authentication.Controllers
 {
@@ -50,5 +52,35 @@ namespace Authentication.Controllers
                 return NotFound();
             }
         }
+
+        [HttpPost]
+        [Route("Assignrole")]
+        public async Task<IActionResult> AssignRole([FromBody] RegisterDto logniRequest)
+        {
+            try
+            {
+                var role = await _authService.AssignRole(logniRequest.Email, logniRequest.Role.ToUpper());
+                if (role)
+                {
+                    _response.Result = role;
+                    return Ok(_response);
+                }
+                else
+                {
+                    _response.IsSuccess = false;
+                    _response.Result = null;
+                    _response.Message = "User not found";
+                    return NotFound();
+                }
+            }
+            catch(System.Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.Result = null;
+                _response.Message = ex.Message;
+                return BadRequest(_response);
+            }
+        }
+
     }
 }
