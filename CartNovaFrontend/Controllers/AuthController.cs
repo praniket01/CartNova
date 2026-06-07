@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using CartNovaFrontend.Models;
 using CartNovaFrontend.Service;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
@@ -84,9 +85,11 @@ namespace CartNovaFrontend.Controllers
             }
         }
 
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            return View();
+            await HttpContext.SignOutAsync();
+            _tokenProvider.clearToken();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

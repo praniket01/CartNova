@@ -51,7 +51,8 @@ namespace Authentication.Service.Impl
                     {
 
                         //Generate Token
-                        var token = _jwtTokenGenerator.GenerateToken(user);
+                        var role = await _userManager.GetRolesAsync(user);
+                        var token = _jwtTokenGenerator.GenerateToken(user,role);
 
                         UserDto userDto = new()
                         {

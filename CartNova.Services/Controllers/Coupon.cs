@@ -3,12 +3,14 @@ using CartNova.Services.DTO;
 using CartNova.Services.Models;
 using CartNova.Services.Repository;
 using CartNovaFrontend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CartNova.Services.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class Coupon : ControllerBase
     {
         private readonly ICouponRepository couponRepository;

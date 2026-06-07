@@ -14,7 +14,7 @@ namespace Authentication.Service.Impl
         {
             this.configuration = configuration;
         }
-        public string GenerateToken(ApplicationUser applicationuser)
+        public string GenerateToken(ApplicationUser applicationuser, IEnumerable<string> roles)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -28,7 +28,7 @@ namespace Authentication.Service.Impl
             };
 
 
-            //claimList.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
+            claimList.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
