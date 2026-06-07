@@ -10,13 +10,15 @@ namespace CartNovaFrontend.Service.Impl
     public class BaseService : IBaseService
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ITokenProvider _tokenProvider;
 
-        public BaseService(IHttpClientFactory httpClientFactory)
+        public BaseService(IHttpClientFactory httpClientFactory, ITokenProvider tokenProvider)
         {
             _httpClientFactory = httpClientFactory;
+            _tokenProvider = tokenProvider;
         }
 
-        public async Task<ResponseDto> SendAsync(RequestDto requestDto)
+        public async Task<ResponseDto> SendAsync(RequestDto requestDto, bool withBearer = true)
         {
             try
             {
@@ -33,6 +35,15 @@ namespace CartNovaFrontend.Service.Impl
                 if (requestDto.Data != null)
                 {
                     message.Content = new StringContent(JsonConvert.SerializeObject(requestDto.Data), Encoding.UTF8, "application/json");
+                }
+
+                if (withBearer)
+                {
+                    var token = _tokenProvider.GetToken();
+                    if (token!= null)
+                    {
+                        message.Headers.Add("Authorization", $"Bearer {token}");
+                    }
                 }
 
                 HttpResponseMessage apiResponse = null;

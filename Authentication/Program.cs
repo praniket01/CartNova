@@ -37,12 +37,11 @@ builder.Services.AddAuthentication(x =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["ApiSettings:JwtSettings:Issuer"],
-        ValidAudience = builder.Configuration["ApiSettings:JwtSettings:Audience"],
+        ValidIssuer = builder.Configuration.GetValue<string>("ApiSettings:JwtSettings:Issuer"),
+        ValidAudience = builder.Configuration.GetValue<string>("ApiSettings:JwtSettings:Audience"),
         IssuerSigningKey =
             new SymmetricSecurityKey(
-                System.Text.Encoding.UTF8.GetBytes(builder.Configuration["ApiSettings:JwtSettings:Key"])),
-        ClockSkew = TimeSpan.Zero
+                System.Text.Encoding.UTF8.GetBytes(builder.Configuration.GetValue<string>("ApiSettings:JwtSettings:Key")))
     };
 });
 
